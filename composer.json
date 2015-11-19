@@ -1,0 +1,40 @@
+{
+  "name": "creacoon/routexl",
+  "type": "library",
+  "description": "A nice way to interact with RouteXL",
+  "keywords": [
+    "routexl",
+    "route",
+    "routeplanning"
+  ],
+  "homepage": "http://github.com/creacoon/routexl",
+  "support": {
+    "issues": "https://github.com/creacoon/RouteXL/issues",
+    "source": "https://github.com/creacoon/RouteXL"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tom Coonen",
+      "email": "tom@creacoon.nl",
+      "homepage": "http://creacoon.nl"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0",
+    "guzzle/guzzle": "~6.1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0|~5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "RouteXL\\": "src/RouteXL/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  }
+}
