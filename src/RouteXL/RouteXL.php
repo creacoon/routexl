@@ -54,6 +54,12 @@ class RouteXL
     protected $itinerary = array();
 
     /**
+     * Skip the optimization of the route?
+     * @var boolean
+     */
+    protected $skip_itinerary_optimization;
+
+    /**
      * API Request result
      * @var Object
      */
@@ -88,6 +94,8 @@ class RouteXL
     {
         $this->username = $username;
         $this->password = $password;
+
+        $this->skip_itinerary_optimization = false;
     }
 
     /**
@@ -118,6 +126,15 @@ class RouteXL
     }
 
     /**
+     * Skip route optimization
+     * @return void
+     */
+    public function skipOptimization()
+    {
+        $this->skip_itinerary_optimization = true;
+    }
+
+    /**
      * Optimize the itinerary
      * @return boolean Returns true on success
      */
@@ -125,6 +142,7 @@ class RouteXL
     {
         if (count($this->itinerary) < 2) throw new NotEnoughLocationsException('Not enough locations available to route (min 2).');
         $body = 'locations=' . json_encode($this->itinerary);
+        $body .= '&skipOptimisation='.($this->skip_itinerary_optimization ? 'true' : 'false');
 
         $this->doRequest(
             'tour',
