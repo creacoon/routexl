@@ -1,5 +1,10 @@
 <?php
 
+namespace RouteXL;
+
+use RouteXL\Exception\NotEnoughLocationsException;
+use RouteXL\Exception\RequestException;
+
 /*
  * This file is part of the RouteXL package.
  *
@@ -20,8 +25,6 @@
  *   )
  *
  */
-
-namespace RouteXL;
 
 class RouteXL
 {
@@ -67,6 +70,7 @@ class RouteXL
      * @var array
      */
     protected static $http_codes = array(
+        ''  => '--No HTTP Status--',
         200 => 'OK',
         204 => 'No distance matrix, tour or route was found',
         401 => 'Authentication problem',
@@ -96,7 +100,10 @@ class RouteXL
             'status/creacoon',
             ['auth' => [$this->username, $this->password]]);
 
-        return (($this->http_code == 200 && $this->result->echo == 'creacoon') ? true : false);
+        if ($this->http_code != 200 && $this->result->echo != 'creacoon')
+            throw new RequestException($this->getHttpMessage());
+
+        return true;
     }
 
     /**
@@ -116,7 +123,7 @@ class RouteXL
      */
     public function tour()
     {
-        if (count($this->itinerary) < 2) return false;
+        if (count($this->itinerary) < 2) throw new NotEnoughLocationsException('Not enough locations available to route (min 2).');
         $body = 'locations=' . json_encode($this->itinerary);
 
         $this->doRequest(
@@ -127,7 +134,7 @@ class RouteXL
             ],
             'POST');
 
-        return (($this->http_code == 200) ? true : false);
+        return true;
     }
 
     /**
@@ -136,7 +143,7 @@ class RouteXL
      */
     public function getResult()
     {
-        return $this->result;
+        return json_decode((string) $this->result);
     }
 
     /**
@@ -157,6 +164,8 @@ class RouteXL
      */
     protected function doRequest($method, $options, $type='GET')
     {
+        $this->result = '';
+
         $client = new \GuzzleHttp\Client();
         $r = $client->request(
             $type,
@@ -165,8 +174,9 @@ class RouteXL
 
         $this->http_code = $r->getStatusCode();
 
-        if ($this->http_code == 200) $this->result = json_decode((string) $r->getBody());
-        else $this->result = '';
+        if ($this->http_code != 200) throw new RequestException($this->getHttpMessage());
+
+        $this->result = $r->getBody();
     }
 
 }
