@@ -141,8 +141,12 @@ class RouteXL
     public function tour()
     {
         if (count($this->itinerary) < 2) throw new NotEnoughLocationsException('Not enough locations available to route (min 2).');
+
         $body = 'locations=' . json_encode($this->itinerary);
-        $body .= '&skipOptimisation='.($this->skip_itinerary_optimization ? 'true' : 'false');
+
+        if ($this->skip_itinerary_optimization) {
+            $body .= '&skipOptimisation=true';
+        }
 
         $this->doRequest(
             'tour',
