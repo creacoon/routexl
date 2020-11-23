@@ -33,7 +33,7 @@ class RouteXL
      * RouteXL API Endpoint URL
      * @var string
      */
-    protected $api_endpoint = 'https://api.routexl.nl/';
+    protected $api_endpoint = 'https://api.routexl.com/';
 
     /**
      * API Username
